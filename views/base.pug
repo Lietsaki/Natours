@@ -1,0 +1,31 @@
+doctype html 
+html 
+    head 
+        block head
+            meta(charset='UTF-8')
+            meta(name='viewport' content='width=device-width, initial-scale=1.0')
+            link(rel='stylesheet' href='/css/style.css')
+            link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
+            link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,300i,700')
+            title Natours | #{title}
+    
+    body
+        //- HEADER - We don't need to specify divs explicitly, only their classes
+        include _header
+
+        //- CONTENT - Create a block to extend this template
+        block content 
+            h1 This is a placeholder header
+
+        //- FOOTER
+        include _footer
+
+        //- script(type='text/javascript' src='/js/mapbox.js')
+        //- script(type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js')
+        //- script(type='text/javascript' src='/js/login.js')
+        //- Instead of importing all of those scripts, create index.js and bundle it with Parcel to create bundle.js and import it here
+        script(src='https://js.stripe.com/v3/')
+        script(type='text/javascript' src='/js/bundle.js')
+
+
+        

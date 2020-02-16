@@ -1,0 +1,12 @@
+extends base
+
+block content
+    main.main
+    .error
+        .error__title
+        h2.heading-secondary.heading-secondary--error Uh oh! Something went wrong!   
+        h2.error__emoji 😢 🤯
+        .error__msg= msg
+        //- 1) Where does 'msg' come from? msg comes from errorController when we render the error page. Keep in mind that those values
+        //-    always come from the function that renders this file.
+        //- 2) How is errorController associated with viewsController 

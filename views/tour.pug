@@ -1,0 +1,114 @@
+extends base
+include _reviewCard
+
+//- Append Mapbox to the head block
+block append head
+    script(src='https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.js')
+    link(href='https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.css' rel='stylesheet') 
+
+    //- Note: Since we sent the tour to this request in viewsController.js, we have acccess to the tour object.
+    //- Note 2: By adding the stripe script, we get access to the stripe library that we use in stripe.js
+
+//- Overview Box Mixing (so we keep our code DRY)
+mixin overviewBox(label, text, icon)
+    .overview-box__detail
+        svg.overview-box__icon
+            use(href=`/img/icons.svg#icon-${icon}`)
+        span.overview-box__label= label
+        span.overview-box__text= text
+
+block content 
+    section.section-header
+        .header__hero
+            .header__hero-overlay &nbsp;
+            img.header__hero-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+
+        .heading-box
+            h1.heading-primary
+                span= `${tour.name} Tour`
+            .heading-box__group
+                .heading-box__detail
+                    svg.heading-box__icon
+                        use(href='/img/icons.svg#icon-clock')
+                    span.heading-box__text= `${tour.duration} days`
+                .heading-box__detail
+                    svg.heading-box__icon
+                        use(href='/img/icons.svg#icon-map-pin')
+                        //- startLocation is a GeoJSON object with some subproperties, in this case we're only interested in the description
+                    span.heading-box__text= tour.startLocation.description
+
+    section.section-description
+        .overview-box
+            div
+                .overview-box__group
+                    h2.heading-secondary.ma-bt-lg Quick facts
+                    //- Convert the date object into a string with only the data we want: months and years.
+                    //- Remember that we can create JavaScript code (in pug) that won't print anything directly starting our line with '-'
+                    - const date = tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'})
+
+                    //- Call our mixing using the '+' sign and specify the arguments we want to pass in.
+                    +overviewBox('Next date', date, 'calendar')
+                    +overviewBox('Difficulty', tour.difficulty, 'trending-up')
+                    +overviewBox('Participants', `${tour.maxGroupSize} people`, 'calendar')
+                    +overviewBox('Rating', `${tour.ratingsAverage} / 5`, 'star')
+
+                .overview-box__group
+                    h2.heading-secondary.ma-bt-lg Your tour guides
+
+                    //- Loop through the tour guides (we don't know how many guides each tour will have, so this is the best option)
+                    each guide in tour.guides
+                        .overview-box__detail
+                            img.overview-box__img(src=`/img/users/${guide.photo}`, alt=`${guide.name}`)
+                            //- Use if statements to determine if we'll display Lead Guide or Tour Guide
+                            - if (guide.role === 'lead-guide')
+                                span.overview-box__label Lead Guide
+                            - if (guide.role === 'guide')
+                                span.overview-box__label Tour Guide
+                            span.overview-box__text= guide.name
+
+        .description-box
+            h2.heading-secondary.ma-bt-lg= `About ${tour.name} tour`
+            //- Split the tour description by the new line character. That'll generate an array with the 2 parts of the paragraph that we split.
+            //- This way we can display the paragraphs without putting them here directly (more readable code)
+            - const paragraphs = tour.description.split('\n');
+            each p in paragraphs
+                p.description__text= p
+
+    section.section-pictures
+        //- Create a pug loop with an index (pug allows us to use the index of the array/object we're looping through) to use in the 
+        //- src and alt attributes. This way we'll be generating the 3 images in a simple loop instead of repeating our code :)
+        each img, index in tour.images
+            //- Use "+1" in the index because it starts with 0 and we need a 1.
+            //- Note how we added a "class attribute" at the end, that's because we need to use our index to complete the class number
+            //- and that wouldn't be possible linking it directly at the start. The class attribute we defined will be chained 
+            //- to the picture-box__img class.
+            .picture-box 
+                img.picture-box__img(src=`/img/tours/${img}`, alt=`The Park Camper Tour ${index + 1} `, class=`picture-box__img--${index + 1}`)
+
+    section.section-map
+        //- Specify a data attribute in html to read it in javascript. This will create a string with all of the locations in the current tour,
+        //- which are an array of objects so we need to turn it into a string with stringify because we can't pass objects to HTML
+        //- Datasets are custom HTML attributes that we can access in js by calling Element.dataset.datasetName, we refer to the name only
+        //- and excude the 'data' prefix when we're calling them. NOTE: '#' means that's an Id with the name 'map'
+        #map(data-locations=`${JSON.stringify(tour.locations)}`)
+
+    section.section-reviews
+        .reviews
+            //- Mixin for the reviewCards that we imported from _reviewCard.pug
+            each review in tour.reviews
+                +reviewCard(review)
+
+    section.section-cta
+        .cta
+            .cta__img.cta__img--logo
+                img(src='/img/logo-white.png', alt='Natours logo')
+            img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='Tour picture')
+            img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='Tour picture')
+            .cta__content
+                h2.heading-secondary What are you waiting for?
+                p.cta__text=`${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
+
+                if(user)
+                    button.btn.btn--green.span-all-rows#book-tour(data-tour-id=`${tour.id}`) Book tour now!
+                else
+                    a.btn.btn--green.span-all-rows(href='/login') Log in to book this tour!

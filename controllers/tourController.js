@@ -76,7 +76,7 @@ exports.resizeTourImages = catchAsync(async (req, res, next) => {
       //console.log('this is the filename:', filename);
     })
   );
-  //console.log('this is req.body:', req.body);
+  //console.log('this is the req.body:', req.body);
   next();
 });
 

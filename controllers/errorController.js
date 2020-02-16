@@ -12,7 +12,7 @@ const handleCastErrorDB = err => {
 // match all the text between quotes and use [0] to make sure we only get the name of the duplicate property
 const handleDuplicateFieldsDB = err => {
   const value = err.errmsg.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
-  //console.log(value);
+
   const message = `Duplicate field value: ${value}. Please use another value`;
   return new AppError(message, 400);
 };
@@ -46,7 +46,7 @@ const sendErrorDev = (req, res, err) => {
 
   // Otherwise render an error page (user friendly). Note that since this function only runs in development mode, we do send the err.message
   // instead of a generic one, like we do down there in the production function.
-  console.error('ERROR: ', err);
+  console.error('ERROR💥: ', err);
   return res.status(err.statusCode).render('error', {
     title: 'Something went wrong!',
     msg: err.message
@@ -64,7 +64,7 @@ const sendErrorProd = (req, res, err) => {
       });
     }
     // A.2) Programming or other unknown error: don't leak the details to the client. Send generic message + log the error
-    console.error('ERROR: ', err);
+    console.error('ERROR💥: ', err);
     return res.status(500).json({
       status: 'Error',
       message: 'Something went wrong!'
@@ -79,7 +79,7 @@ const sendErrorProd = (req, res, err) => {
     });
   }
   // B.2) Programming or other unknown error: don't leak the details to the client. Send generic message + log the error
-  console.error('ERROR: ', err);
+  console.error('ERROR💥: ', err);
   return res.status(err.statusCode).render('error', {
     title: 'Something went wrong!',
     msg: 'Please try again later'

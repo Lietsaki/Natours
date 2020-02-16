@@ -7,6 +7,7 @@ const Review = require('./../../models/reviewModel');
 
 dotenv.config({ path: './config.env' });
 
+// Since we're running commands to import/delete our data, we need to connect to the database as a first step
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
   process.env.DATABASE_PASSWORD
@@ -36,7 +37,7 @@ const importData = async () => {
     await Review.create(reviews);
     console.log('Data successfully loaded!');
   } catch (err) {
-    console.log('There was a error! Take a look:', err);
+    console.log('There was an error importing the data! Take a look:', err);
   }
   process.exit();
 };
@@ -49,7 +50,7 @@ const deleteData = async () => {
     await Review.deleteMany();
     console.log('Data successfully deleted!');
   } catch (err) {
-    console.log('There was a error! Take a look:', err);
+    console.log('There was an error deleting the data! Take a look:', err);
   }
   process.exit();
 };

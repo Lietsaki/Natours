@@ -208,13 +208,13 @@ tourSchema.pre(/^find/, function(next) {
   next();
 });
 
-// Tell us how long the query took to return the results
-tourSchema.post(/^find/, function(docs, next) {
-  console.log(`Query took ${Date.now() - this.start} milliseconds!`);
-  //console.log(docs); <--- This is the result of our query, we have access to it in post middleware. For example,
-  // in this case it'd be all the documents that this query returned
-  next();
-});
+// // Tell us how long the query took to return the results
+// tourSchema.post(/^find/, function(docs, next) {
+//   console.log(`Query took ${Date.now() - this.start} milliseconds!`);
+//   //console.log(docs); <--- This is the result of our query, we have access to it in post middleware. For example,
+//   // in this case it'd be all the documents that this query returned
+//   next();
+// });
 
 // AGGREGATION MIDDLEWARE - 'This' points to the current aggregation object
 // Display only tours whose secretTour property is not equal to true - This may interfere with other aggregation pipelines, such as $geoNear,

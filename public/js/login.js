@@ -2,11 +2,14 @@
 import axios from 'axios';
 import { showAlert } from './alerts';
 
+// Note: Since we're using the same url for the API and the website, we can skip the host in the 'url' property of our axios call,
+// using a relative path ('/api/v1/users/login'). However, we need to specify the full url when we're in development, for example:
+// 'http://127.0.0.1:3000/api/v1/users/login' ----> This is what we'd put in development
 export const login = async (email, password) => {
   try {
     const res = await axios({
       method: 'POST',
-      url: 'http://127.0.0.1:3000/api/v1/users/login',
+      url: '/api/v1/users/login',
       data: {
         email,
         password
@@ -29,12 +32,12 @@ export const logout = async () => {
   try {
     const res = await axios({
       method: 'GET',
-      url: 'http://127.0.0.1:3000/api/v1/users/logout'
+      url: '/api/v1/users/logout'
     });
     // Reload the page from the server and not browser cache passing in true as an argument to reload after logging out
     if ((res.data.status = 'success')) location.reload(true);
   } catch (err) {
-    //console.log(err.response);
+    console.log(err.response);
     showAlert('error', 'Error logging out, try again!');
   }
 };

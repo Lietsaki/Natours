@@ -62,7 +62,6 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   // Send the welcome email to the new user
   const url = `${req.protocol}://${req.get('host')}/me`;
-  console.log(url);
   await new Email(newUser, url).sendWelcome();
 
   // the res here is the same we defined in the createSendToken function. 201 stands for created.
@@ -142,7 +141,6 @@ exports.protect = catchAsync(async (req, res, next) => {
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
-  console.log('This is the token:', token);
 
   if (!token) {
     return next(
@@ -152,7 +150,6 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // 2) Verificating the token (read the explanatory note up there)
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  //console.log('This is the decoded token for protected routes:', decoded);
 
   // 3) Check if user still exists
   const currentUser = await User.findById(decoded.id);
@@ -280,7 +277,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
-    //console.log(err);
+    console.log(err);
 
     return next(
       new AppError('There was an error sending the email, try again later!'),

@@ -113,14 +113,18 @@ userSchema.methods.correctPassword = async function(
 };
 
 // Instance method to check if the user has changed their password || In an IM this always points to the current document
+// This function is used in authController.js inside our .isLoggedIn() and .protect() functions
 userSchema.methods.changedPasswordAfter = function(JTWTimestamp) {
+  // 1) Convert the date in which the password was changed to seconds. Note that the property .passwordChangedAt will only appear in a user
+  // object if he/she changed her password.
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
       10
-    ); // Convert the date to seconds
+    );
 
-    //   console.log(changedTimestamp, JTWTimestamp);
+    // 2) Check if the time in which the password was changed is larger than the time in which the login token was created
+    // console.log(changedTimestamp, JTWTimestamp);
     return JTWTimestamp < changedTimestamp; // Example: 100 < 200 (suppose we created the token at 100 and changed it at 200)
   }
 
@@ -139,11 +143,11 @@ userSchema.methods.createPasswordResetToken = function() {
     .update(resetToken)
     .digest('hex');
 
-  console.log(
-    { resetToken },
-    'The encrypted version of resetToken is this one:',
-    this.passwordResetToken
-  );
+  // console.log(
+  //   { resetToken },
+  //   'The encrypted version of resetToken is this one:',
+  //   this.passwordResetToken
+  // );
 
   // The expiration time is 10 minutes. Date.now() gives us the current time in miliseconds, so we multiply it by 1000 to get into seconds
   // and then by 60 to get into minutes, then we sum 10 to get our desired ten minutes

@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 
 // Handle uncaught exceptions. They're errors in synchronous code
 process.on('uncaughtException', err => {
-  console.log('UNCAUGHT EXCEPTION | shutting down...');
+  console.log('UNCAUGHT EXCEPTION 💥 | shutting down...');
   console.log(
     'Here is the error of the uncaught exception:',
     err.name,
@@ -34,7 +34,8 @@ mongoose
 // Mongoose.connect returns a promise, we're consuming it with .then | Also, there we have access to the con object, but it's not necessary
 // use it so we can just use a fuction "()" to log that connection successful message
 
-console.log('process.env is:', process.env.NODE_ENV);
+// Tell us if we are in development or production
+//console.log('process.env is:', process.env.NODE_ENV);
 
 const port = process.env.PORT || 3000;
 // If we don't specify the IP, the default one for app.listen is localhost, that is, 127.0.0.1
@@ -51,15 +52,12 @@ const server = app.listen(port, '127.0.0.1', () => {
 // one is the function we want to run if that event is fired
 process.on('unhandledRejection', err => {
   console.log(
-    'Here is the error name and message of the unhandled promise rejection:',
+    'Here is the error of the unhandled promise rejection:',
     err.name,
-    err.message
-  );
-  console.log(
-    'And hehre is the full error of the unhandled promise rejection:',
+    err.message,
     err
   );
-  console.log('Unhandled rejection D: | Shutting down...');
+  console.log('Unhandled promise rejection 💥 | Shutting down...');
 
   // Instead of just using process.exit, we close the server gracefully using server.close and process.exit inside it
   server.close(() => {

@@ -37,6 +37,7 @@ mongoose
 // Tell us if we are in development or production
 //console.log('process.env is:', process.env.NODE_ENV);
 
+// Behind the scenes, Heroku will assign their own port to process.env.PORT, so it's useful to store it in a variable
 const port = process.env.PORT || 3000;
 // If we don't specify the IP, the default one for app.listen is localhost, that is, 127.0.0.1
 const server = app.listen(port, '127.0.0.1', () => {

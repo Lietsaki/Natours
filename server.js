@@ -60,9 +60,18 @@ process.on('unhandledRejection', err => {
   );
   console.log('Unhandled promise rejection 💥 | Shutting down...');
 
-  // Instead of just using process.exit, we close the server gracefully using server.close and process.exit inside it
+  // Instead of just using process.exit, close the server gracefully using server.close and process.exit inside it
   server.close(() => {
     // Shut down the app - 1 means uncaught exception, 0 means success.
     process.exit(1);
+  });
+});
+
+// Handle the SIGTERM signal from Heroku. This will close the server but handle all the pending requests before that.
+// There's no need to use process.exit because the SIGTERM itself will cause the app to shut down.
+process.on('SIGTERM', () => {
+  console.log('SIGTERM RECEIVED. Shutting down gracefully 👋');
+  server.close(() => {
+    console.log('Process terminated 📴');
   });
 });

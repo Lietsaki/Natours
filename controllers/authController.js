@@ -19,21 +19,22 @@ const signToken = id => {
 };
 
 // Function to send a token to the user (log them in)
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
 
-  // Define the options for the cookie
-  const cookieOptions = {
+  // Define a cookie, name it "jwt" and send the token in it. The third agument are the cookie options (an object)
+  res.cookie('jwt', token, {
     expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000 // Convert the "90" to miliseconds. It'll expire in 90 days from now.
+      // Convert the value of process.env.JWT_COOKIE_EXPIRES_IN (5) to miliseconds. It'll expire in 5 days from now.
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true // This particular cookie should only be accessed by the server. Any attempt to access the cookie from a client script is strictly forbidden.
-  };
-
-  // Send the cookie only via https when we're on production.
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
-  // Define a cookie, name it "jwt" and send the token in it.
-  res.cookie('jwt', token, cookieOptions);
+    // This particular cookie should only be accessed by the server. Any attempt to access the cookie from a client script is strictly forbidden.
+    httpOnly: true,
+    // Send the cookie only via https when our protocol is https (req.secure) or if the headers set by Heroku('x-forwarded-proto') are https.
+    // That OR statement will return either true or false (true in this case since we're using Heroku)
+    // This line is just a way to say that the cookies should be sent using https when we're in production
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https'
+  });
 
   // Remove password from the output when we create a new user
   user.password = undefined;
@@ -65,7 +66,7 @@ exports.signup = catchAsync(async (req, res, next) => {
   await new Email(newUser, url).sendWelcome();
 
   // the res here is the same we defined in the createSendToken function. 201 stands for created.
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, req, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -96,7 +97,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // Only if the user exists and if the password is correct we'll reach this piece of code here
   // 3) If everything is correct, then send back the token to the client
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 // Log users out sending a new cookie without a token and with the same name('jwt') (to override the current cookie and hence log the user out)
@@ -320,7 +321,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   // 3) Log the user in (send the JWTs)
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 // CHANGE THE PASSWORD FOR LOGGED IN USERS
@@ -354,5 +355,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   await user.save();
 
   // 4) Log in the user with the new password, send JWT
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });

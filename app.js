@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -37,6 +38,14 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Set security HTTP headers
 app.use(helmet());
+
+// Implement CORS (Allow requests to our API from any domain and in any route[tours, users, reviews, bookings])
+// This will allow simple requests (GET and POST) from any domain and in any route.
+app.use(cors());
+
+// ALLOW non-simple requests from other domains: Respond to the options request ('options' is an HTTP method) made by the browser
+// in the preflight phase (when another domain wants to make a non-simple request). Use '*' to allow access in all our routes.
+app.options('*', cors());
 
 // Serve static files from the the public folder, including css files, images, etc. We'll be able to access them without
 // writing the "/public" part tho, just like this "http://127.0.0.1:3000/tour.html", because Express makes that selected

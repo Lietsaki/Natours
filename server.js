@@ -68,6 +68,7 @@ process.on('unhandledRejection', err => {
 });
 
 // Handle the SIGTERM signal from Heroku. This will close the server but handle all the pending requests before that.
+// This termination signal is sent every time we restart the app.
 // There's no need to use process.exit because the SIGTERM itself will cause the app to shut down.
 process.on('SIGTERM', () => {
   console.log('SIGTERM RECEIVED. Shutting down gracefully 👋');

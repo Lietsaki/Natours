@@ -22,7 +22,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
     //   req.params.tourID
     // }&user=${req.user.id}&price=${tour.price}`,
 
-    success_url: `${req.protocol}://${req.get('host')}/my-tours/`,
+    success_url: `${req.protocol}://${req.get('host')}/my-tours?alert=booking`,
 
     cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
     customer_email: req.user.email, // user is already inside request because this is a protected route

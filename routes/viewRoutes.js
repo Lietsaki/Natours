@@ -5,6 +5,10 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
+// Run the alerts function for every page to display an alert if there's one. This function will grab an alert from req.query.
+//Currently, we only use this one when someone successfully books a tour
+router.use(viewsController.alerts);
+
 // Since '/' (our homepage) is the route we want to hit once a credit card is successfully charged, we need to create a new booking in this
 // point of time using our createBookingCheckout middleware function
 

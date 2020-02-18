@@ -4,6 +4,19 @@ const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
+// Alert function to display an alert upon successfully booking a new tour
+exports.alerts = (req, res, next) => {
+  // 1) Get the alert from our query string (we put there in bookingController.js in the success url)
+  // Note: Remember that req.query returns everything after the '?' in the url, and that's exactly where we put alert in bookingController.js
+  const { alert } = req.query;
+
+  // 2) If the alert is equal to 'booking', add .alert to res.locals(so our templates have access to it) with a success message.
+  if (alert === 'booking')
+    res.locals.alert =
+      "Your booking was successful! Please check your email for confirmation. If your booking doesn't show up here immediately, please come back later!";
+  next();
+};
+
 exports.getOverview = catchAsync(async (req, res, next) => {
   // 1) Get all tour data from our collection
   const tours = await Tour.find();

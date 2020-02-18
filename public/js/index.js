@@ -4,6 +4,7 @@ import 'regenerator-runtime/runtime'; // Polyfill to emulate a full ES2015+ envi
 import { displayMap } from './mapbox';
 import { login, logout } from './login';
 import { updateSettings } from './updateSettings';
+import { showAlert } from './alerts';
 import { bookTour } from './stripe';
 
 // ==================================================== DOM ELEMENTS ==================================================================== //
@@ -101,3 +102,10 @@ if (bookBtn)
     const { tourId } = event.target.dataset;
     bookTour(tourId);
   });
+
+// DISPLAY THE SUCCESS ALERT WHEN SOMEONE BOOKS A TOUR.
+// 1) Get the alert message from the data-alert attribute from base.pug
+const alertMessage = document.querySelector('body').dataset.alert;
+
+// 2) If there's an alert, display the alert using our showAlert function
+if (alert) showAlert('success', alertMessage, 20);

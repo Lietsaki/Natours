@@ -9,7 +9,9 @@ html
             link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Lato:300,300i,700')
             title Natours | #{title}
     
-    body
+    //- Pick up the alert that we sent to res.locals from viewsController.js (if there's one) and define our data property to
+    //- alert (the message contained in the alert property). If there's no alert, set the value of this dataset to an empty string ('')
+    body(data-alert=`${alert ? alert : ''}`)
         //- HEADER - We don't need to specify divs explicitly, only their classes
         include _header
 

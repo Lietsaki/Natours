@@ -16,6 +16,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
 const viewRouter = require('./routes/viewRoutes');
 
 // Start express app
@@ -61,6 +62,17 @@ const limiter = rateLimit({
 });
 // Apply the middleware limiter function to all the routes startes with '/api'.
 app.use('/api', limiter);
+
+// STRIPE WEBHOOK ROUTE FOR CHECKOUT SESSION COMPLETED
+// Why do we define this here instead in the bookingRouter? It's because in this handler funcion when we receive the body the stripe
+// function that we're then gonna use to read the body needs it in a raw form (as a string, and NOT in json).
+// So in this route 'webhook-checkout', we need the body coming with the request(req.body) in a raw form and not in json,
+// That's why this app.post is before the body parser, because otherwise it'd be converted into json. USE express.raw
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 
 // Morgan middleware to see the route we accessed in our terminal when we're in development
 if (process.env.NODE_ENV === 'development') {

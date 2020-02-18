@@ -108,4 +108,4 @@ if (bookBtn)
 const alertMessage = document.querySelector('body').dataset.alert;
 
 // 2) If there's an alert, display the alert using our showAlert function
-if (alert) showAlert('success', alertMessage, 20);
+if (alertMessage) showAlert('success', alertMessage, 20);

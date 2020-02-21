@@ -2,12 +2,12 @@ const Review = require('./../models/reviewModel');
 const Factory = require('./handlerFactory');
 const AppError = require('./../utils/appError');
 
-// ALLOW NESTED ROUTES | Automatically put the current user id in the review body
+// ALLOW NESTED ROUTES | Automatically put the current tour and user id in the review body
 exports.setTourAndUserIds = (req, res, next) => {
-  // 1) Get the id of the tour from the url
+  // 1) Get the id of the tour from the url (if it wasn't specified in the body)
   if (!req.body.tour) req.body.tour = req.params.tourId; // tourId is specified in tourRoutes.js as a parameter in the url
 
-  // 2) Get the user id from protect(), a middleware function coming from authController.js that runs before .createReview in tourRoutes.js
+  // 2) Get the user id from protect(), a middleware function coming from authController.js that runs before .createReview in reviewRoutes.js
   req.body.user = req.user.id;
   next();
 };

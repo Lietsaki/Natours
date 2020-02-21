@@ -96,14 +96,12 @@ exports.getOne = (Model, populateOptions) =>
     });
   });
 
-exports.getAll = Model =>
+exports.getAll = (Model, populateOptions) =>
   catchAsync(async (req, res, next) => {
-    console.log('This is the req.query object:', req.query);
-
     // Allow nested GET reviews on tour (get all reviews of a certain tour)
     let filter = {};
 
-    // If there's a tour Id, use it as a filter object to show only reviews of that tour. Remember that tourId is a defined
+    // If there's a tour Id, use it as a filter object to show only data of that tour. Remember that tourId is a defined
     // parameter in tourRoutes.js and tour is a property of the review Model which is an id of a tour, you can check that in reviewModel.js
     if (req.params.tourId) filter = { tour: req.params.tourId };
 
@@ -113,6 +111,9 @@ exports.getAll = Model =>
       .sort()
       .limitFields()
       .paginate();
+
+    if (populateOptions)
+      features.query = features.query.populate(populateOptions);
     const doc = await features.query; // features.query.explain() returns stats of the query and its performance which indexes can help to improve.
     // Our query with all the functions applied now lives within the query property of features.
 

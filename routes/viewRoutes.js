@@ -14,12 +14,15 @@ router.use(viewsController.alerts);
 
 router.get(
   '/',
-  // bookingController.createBookingCheckout,
+  // bookingController.createBookingCheckout, // this function was for development-use only
   authController.isLoggedIn,
   viewsController.getOverview
 );
+
+// In order to render the login/signup buttons or not in _header.pug, use authController.isLoggedIn in the following routes:
 router.get('/tour/:slug', authController.isLoggedIn, viewsController.getTour);
 router.get('/login', authController.isLoggedIn, viewsController.getLoginForm);
+router.get('/signup', authController.isLoggedIn, viewsController.getSignupForm);
 router.get('/me', authController.protect, viewsController.getAccount);
 router.get('/my-tours', authController.protect, viewsController.getMyTours);
 

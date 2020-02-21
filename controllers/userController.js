@@ -152,7 +152,7 @@ exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
     message:
-      'This route is not define and never will be. Please use /signup instead :)'
+      'This route is not defined and never will be. Please use /signup instead :)'
   });
 };
 

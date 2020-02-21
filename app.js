@@ -130,7 +130,7 @@ app.use((req, res, next) => {
 
 // ======================================================= ROUTES ====================================================================== //
 
-// PUG ROUTES
+// PUG ROUTES - see viewRoutes.js
 app.use('/', viewRouter);
 
 // API ROUTES | These next 2 lines are caled "mounting the router"

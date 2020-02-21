@@ -50,7 +50,7 @@ const createSendToken = (user, statusCode, req, res) => {
 
 exports.signup = catchAsync(async (req, res, next) => {
   // With this way of creating a new user, we only receive the data that we need and avoid users setting themselves as an admin.
-  // We can set anyone's role as admin manually in MongoDB atlas, adding the property ourselves
+  // We can set anyone's role as admin manually in MongoDB atlas, adding the property ourselves in case we need to set a new admin.
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -101,9 +101,12 @@ exports.login = catchAsync(async (req, res, next) => {
 });
 
 // Log users out sending a new cookie without a token and with the same name('jwt') (to override the current cookie and hence log the user out)
+// Just put 'loggedout' as the content, that'll be an invalid token.
 exports.logout = (req, res) => {
   res.cookie('jwt', 'loggedout', {
-    expires: new Date(Date.now() + 10 * 1000), // Make it expire in 10.000 miliseconds, so that's essentially 10 seconds
+    // Make it expire in 10.000 miliseconds, so that's essentially 10 seconds, becase we won't need it for anything else other than
+    // overriding the real token
+    expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true
   });
 
@@ -127,7 +130,7 @@ exports.logout = (req, res) => {
 // specified in our signup method up there.
 
 // As a third step, we created an instance method in userModel.js to check if the password has been changed after the creation of the token.
-// Finally, we pass the current user data into req.user so that the next middleware functions have access to such data
+// Finally, we pass the current user data into req.user so that the next middleware functions have access to such data.
 
 // ================================================================================================================================== //
 
@@ -139,7 +142,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.jwt) {
+  } else if (req.cookies.jwt && req.cookies.jwt !== 'loggedout') {
     token = req.cookies.jwt;
   }
 
@@ -198,7 +201,7 @@ exports.isLoggedIn = async (req, res, next) => {
 
       // THERE IS A LOGGED IN USER
       // Use the res.locals object to store values we want to access in the rest of the app, like in our templates.
-      // Every pug template has access to the res.locals object
+      // Every pug template has access to the res.locals object. Thanks to this, we can display or not the "signup/login" buttons in _header.pug
       res.locals.user = currentUser;
 
       // Make sure to RETURN next to exit the function and avoid calling next twice in the same function, which would throw an error

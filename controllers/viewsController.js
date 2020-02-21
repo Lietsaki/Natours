@@ -21,10 +21,7 @@ exports.getOverview = catchAsync(async (req, res, next) => {
   // 1) Get all tour data from our collection
   const tours = await Tour.find();
 
-  // 2) Build template
-
-  // 3) Render that template using the tour data
-
+  // 2) Render the 'overview' pug template using the tour data
   res.status(200).render('overview', {
     title: 'All Tours',
     tours
@@ -33,7 +30,7 @@ exports.getOverview = catchAsync(async (req, res, next) => {
 
 exports.getTour = catchAsync(async (req, res, next) => {
   // 1) Get the tour whose slug(a defined property in our schema) matches the slug defined in the url
-  // Also make sure to populate the reviews as we show this information in the tour page. We can do this
+  // 2) make sure to populate the reviews as we show this information in the tour page. We can do this
   // thanks to our virtual populate in tourModel.js
   const tour = await Tour.findOne({ slug: req.params.slug }).populate({
     path: 'reviews',
@@ -55,6 +52,12 @@ exports.getTour = catchAsync(async (req, res, next) => {
 exports.getLoginForm = (req, res) => {
   res.status(200).render('login', {
     title: 'Log into your account'
+  });
+};
+
+exports.getSignupForm = (req, res) => {
+  res.status(200).render('signup', {
+    title: 'Create an account'
   });
 };
 

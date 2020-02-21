@@ -2,7 +2,7 @@
 import 'core-js/stable'; //  Polyfill to emulate a full ES2015+ environment
 import 'regenerator-runtime/runtime'; // Polyfill to emulate a full ES2015+ environment
 import { displayMap } from './mapbox';
-import { login, logout } from './login';
+import { signup, login, logout } from './login';
 import { updateSettings } from './updateSettings';
 import { showAlert } from './alerts';
 import { bookTour } from './stripe';
@@ -11,6 +11,8 @@ import { bookTour } from './stripe';
 
 // Mapbox Map (we're selecting the div with the 'map' id)
 const mapBox = document.getElementById('map');
+// Signup Form
+const signupForm = document.querySelector('.form--signup');
 // Login Form
 const loginForm = document.querySelector('.form--login');
 // Logout button
@@ -30,12 +32,27 @@ if (mapBox) {
   displayMap(locations);
 }
 
+// Perform signup
+if (signupForm) {
+  signupForm.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('passwordConfirm').value;
+    signup(name, email, password, passwordConfirm);
+  });
+}
+
 // Perform login - Note that we can only get email and password in our "submit" event listener because the values
 // have not been typed in before the user hits the submit button. Trying to get email/pass before the submit event would result in blank fields.
 if (loginForm) {
   loginForm.addEventListener('submit', event => {
-    // preventDefault() method cancels the event if it is cancelable. In this case, the form won't submit when clicking on a submit button.
+    // preventDefault() method cancels the event if it is cancelable. In this case, the form won't submit when clicking on an input with
+    // type='submit'. That's because we want to use only our button element located in the end of the form (check login.pug to see it)
     event.preventDefault();
+
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     login(email, password);
@@ -44,6 +61,7 @@ if (loginForm) {
 
 if (logoutButton) logoutButton.addEventListener('click', logout);
 
+// Update the user name, email and/or photo
 if (userDataForm)
   userDataForm.addEventListener('submit', event => {
     event.preventDefault();

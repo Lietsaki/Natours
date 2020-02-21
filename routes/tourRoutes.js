@@ -5,9 +5,10 @@ const reviewRouter = require('./../routes/reviewRoutes');
 
 const router = express.Router();
 
+// NOTE ABOUT NESTED GET REVIEWS
 // Basically, when the route matches "/api/v1/tours", it'll be sent here (as specificed in app.js) and if it then matches
 // "/api/v1/tours/:tourId/reviews", we're redirecting it to the review router using .use, that's why they're called 'Nested Routes'
-// Example: POST /tours/id34343/review
+// Example: POST or GET /tours/id34343/review
 router.use('/:tourId/reviews', reviewRouter);
 
 // GET THE TOP 5 BEST CHEAPEST TOURS

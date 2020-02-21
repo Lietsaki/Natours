@@ -4,7 +4,7 @@ const User = require('../models/userModel');
 const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const Factory = require('./handlerFactory');
-//const AppError = require('../utils/appError');
+const AppError = require('../utils/appError');
 
 // NOTE ABOUT THE SUCCESS URL: It will contain the data we need to create a new booking with our bookingModel, that is, the tour Id, user id
 // and the tour price. Of course, that's not secure because anyone who knows this url structure could technically create a booking without
@@ -32,7 +32,7 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
         name: `${tour.name} Tour`,
         description: tour.summary,
         images: [
-          `${req.protocol}://${req.get('host')}/img/tours/${tour.imageCover}`
+          `${req.protocol}://${req.get('host')}/img/tours/${tour.imageCover}` // This image only shows up in production
         ],
         amount: tour.price * 100, // Multiply the price by 100 to convert it to cents
         currency: 'usd',
@@ -77,7 +77,7 @@ const createBookingCheckout = async session => {
   await Booking.create({ tour, user, price });
 };
 
-// Stripe webhook that runs once a payment is successful. It receives req.body, the signature headers set by stripe and our webhook secret
+// Stripe webhook that runs once a payment is successful. It receives req.body, the signature headers set by stripe and our webhook secret.
 exports.webhookCheckout = (req, res, next) => {
   const signature = req.headers['stripe-signature'];
 
@@ -98,6 +98,21 @@ exports.webhookCheckout = (req, res, next) => {
 
   res.status(200).json({ received: true });
 };
+
+// Check if a user has booked a tour
+exports.checkIfBooked = catchAsync(async (req, res, next) => {
+  // Query for all the bookings whose user and tour match the ones we're passing in the request object
+  const booking = await Booking.find({
+    user: req.user.id,
+    tour: req.body.tour
+  });
+
+  // 'booking' will return an array with all the results of the query
+  // So, if they're zero that means that the user did not buy the tour and we must return an error
+  if (booking.length === 0)
+    return next(new AppError('You must buy this tour to review it', 401));
+  next();
+});
 
 exports.createBooking = Factory.createOne(Booking);
 exports.getBooking = Factory.getOne(Booking);

@@ -9,7 +9,7 @@ module.exports = class Email {
     this.to = user.email;
     this.firstName = user.name.split(' ')[0];
     this.url = url;
-    this.from = `Jonas Schmedtmann <${process.env.EMAIL_FROM}>`;
+    this.from = `Ricardo Sandez <${process.env.EMAIL_FROM}>`;
   }
   // NOTE: The 'url' parameter is a link we want to put in our email, for example, as a CTA. We pass in as an argument to use it as a variable
   // in our pug templates.

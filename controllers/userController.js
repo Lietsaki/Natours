@@ -98,8 +98,6 @@ exports.getMe = (req, res, next) => {
 
 // ALLOW THE USER TO UPDATE THEIR DATA (EX. NAME)
 exports.updateMe = catchAsync(async (req, res, next) => {
-  // console.log(req.file);
-  // console.log(req.body);
   // 1) Create an error if the user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(

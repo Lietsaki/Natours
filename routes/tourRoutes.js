@@ -26,14 +26,14 @@ router
     tourController.getMonthlyPlan
   );
 
-// GET TOURS WHOSE START POINT IS WITHIN X DISTANCE
+// GET TOURS WHOSE STARTING POINT IS WITHIN X DISTANCE
 router
   .route('/tours-within/:distance/center/:latlng/unit/:unit')
   .get(tourController.getToursWithin);
 
 // URL example: /tours-distance/233/center/-40,45/unit/mi
 
-// GET TOURS WHOSE START POINT IS WITHIN X DISTANCE V2
+// GET TOURS IN ORDER OF NEAREST TO FARTHEST FROM A SPECIFIED POINT + THE DISTANCE BETWEEN THEM AND THAT SPECIFIED POINT ($geoNear)
 router.route('/distances/:latlng/unit/:unit').get(tourController.getDistances);
 
 // COMMON TOUR ROUTES

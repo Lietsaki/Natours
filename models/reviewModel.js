@@ -29,8 +29,8 @@ const reviewSchema = new mongoose.Schema(
     }
   },
   {
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true }
+    toJSON: { virtuals: false }, // Set these two to false so we don't get a dobule id in our query results.
+    toObject: { virtuals: false }
   }
 );
 

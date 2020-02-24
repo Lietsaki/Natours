@@ -12,12 +12,12 @@ const multerStorage = multer.memoryStorage();
 // the same null for an error as the first argument and true/false to confirm if you want that type of file as the second one.
 const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
-    // Yes, mimetype shows 'image/gif' when uploading a gif, so users can have gifs as profile pic
+    // Yes, mimetype shows 'image/gif' when uploading a gif, so users can have gifs as profile pic but they will be transformed to jpeg.
     cb(null, true);
   } else {
     cb(
       new AppError(
-        'That file is not an image! Please upload only images.',
+        `That file is not an image! Please upload only JPG/JPEG images (We also accept .gif but those are automatically converted to .jpeg).`,
         400
       ),
       false
@@ -259,8 +259,9 @@ exports.getDistances = catchAsync(async (req, res, next) => {
           type: 'Point',
           coordinates: [lng * 1, lat * 1] // Convert the coordinates to numbers multiplying them by one
         },
-        distanceField: 'distance', // All the calculated distances will be stored here
-        // Multiply all distances by this value, so we can transform it to miles, km or radians. The distance is specified in meters by default.
+        distanceField: 'distance', // All the calculated distances will be stored here. This is what we send in $project.
+        // distanceMultiplier is the factor to multiply all distances returned by the query, so we can transform it to miles, km or radians.
+        // The distance is specified in meters by default, so that's why we had to define the multiplier const up there.
         distanceMultiplier: multiplier
       }
     },

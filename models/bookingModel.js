@@ -32,7 +32,6 @@ const bookingSchema = new mongoose.Schema({
     default: true
   }
 });
-
 // Populate the tour and user automatically whenever there's a query.
 // Note: Why do we use an object to populate the 'tour'? Well, it's because we only want to display the tour name, so we need to use 'select'
 // in our options object, 'path' is the property we want to select, which we need to specify when we pass in an options object.

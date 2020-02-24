@@ -83,7 +83,7 @@ block content
             //- and that wouldn't be possible linking it directly at the start. The class attribute we defined will be chained 
             //- to the picture-box__img class.
             .picture-box 
-                img.picture-box__img(src=`/img/tours/${img}`, alt=`The Park Camper Tour ${index + 1} `, class=`picture-box__img--${index + 1}`)
+                img.picture-box__img(src=`/img/tours/${img}`, alt=`${tour.name} ${index + 1} `, class=`picture-box__img--${index + 1}`)
 
     section.section-map
         //- Specify a data attribute in html to read it in javascript. This will create a string with all of the locations in the current tour,

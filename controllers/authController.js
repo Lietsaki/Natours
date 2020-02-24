@@ -10,7 +10,7 @@ const Email = require('./../utils/email');
 // jwt.sign: The first argument is the data we want to store in the token, which is called the Payload. It must be an object, in
 // this case, we only want the id. Saying just id is the same as {id: id} where the first is the object property and the latter it's the
 // function argument.
-// The second argument that the sign method takes is the secreOrPrivateKey. The third one are options.
+// The second argument that the sign method takes is the secretOrPrivateKey. The third one are options.
 // ===================================================================================================================================== //
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -172,7 +172,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   // GRANT ACCESS TO PROTECTED ROUTE
-  // Put the entire user data in the request
+  // Put the entire user data in the request and in the locals (so our templates have access to it)
   req.user = currentUser;
   res.locals.user = currentUser;
   next();

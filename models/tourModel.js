@@ -85,13 +85,19 @@ const tourSchema = new mongoose.Schema(
       default: false
     },
     startLocation: {
-      // In order for this object to be recognized as GeoJSON, we need the type and coordinates properties
+      // In order for this object to be recognized as GeoJSON, we need the type and coordinates properties. Type must be set to 'Point'.
       type: {
         type: String,
         default: 'Point',
-        enum: ['Point']
+        enum: ['Point'] // Enum provides all the possible values of a property. In this case, 'type' can only be 'Point'.
       },
-      coordinates: [Number],
+      coordinates: {
+        type: [Number],
+        required: [
+          true,
+          'A tour must have a start location with its coordinates!'
+        ]
+      },
       address: String,
       description: String
     },
@@ -100,7 +106,7 @@ const tourSchema = new mongoose.Schema(
       {
         type: {
           type: String,
-          defalt: 'Point',
+          default: 'Point',
           enum: ['Point']
         },
         coordinates: [Number],
@@ -122,9 +128,32 @@ const tourSchema = new mongoose.Schema(
     // This object are the options of our Schema. Here we can specify some extra options
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
-    // For example, here we're setting virtual properties to be shown when we send data as JSON and as a JS object.
+    // For example, here we're setting virtual properties to be shown when we send data as JSON and as a JS object returning the _id property.
   }
 );
+
+// ======================================================= LOCATIONS VALIDATION ============================================================ //
+// Since we cannot specify the required property in an array of objects, we have to use the .validate mongoose function to
+// make our 'locations' property required (so that we can render the map in the tour page)
+
+// Set 'locations' as required
+tourSchema.path('locations').validate(function(locations) {
+  if (!locations || locations.length === 0) {
+    return false;
+  }
+  return true;
+}, 'Please specify the tour locations! These are different from the startLocation.');
+
+// Set 'coordinates' required for every location
+tourSchema
+  .path('locations')
+  .schema.path('coordinates')
+  .validate(function(locations) {
+    if (!locations || locations.length === 0) {
+      return false;
+    }
+    return true;
+  }, 'Please specify the coordinates of every tour location!');
 
 // ============================================================ INDEXES =================================================================== //
 // Indexes are special data structures that store a small portion of the collection’s dataset in order to perform more effective queries

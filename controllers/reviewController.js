@@ -15,9 +15,12 @@ exports.setTourAndUserIds = (req, res, next) => {
 // Only allow authors to update and delete their reviews
 exports.checkIfAuthor = async (req, res, next) => {
   const review = await Review.findById(req.params.id);
+  // Allow admins to edit any review
   if (req.user.role !== 'admin') {
     if (review.user.id !== req.user.id)
-      return next(new AppError(`You cannot edit someone's else review.`, 403));
+      return next(
+        new AppError(`You cannot edit or delete someone's else review.`, 403)
+      );
   }
   next();
 };

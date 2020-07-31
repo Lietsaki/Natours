@@ -84,7 +84,7 @@ const filterObj = (object, ...allowedFields) => {
   // iterated in the same order that a normal loop would.
   Object.keys(object).forEach(el => {
     // This line is a form of adding properties to objects. For example: newObject["name"] = object["name"] that'll add the name property from
-    // newObject to object
+    // object to newObject.
     if (allowedFields.includes(el)) newObject[el] = object[el];
   });
   return newObject;
